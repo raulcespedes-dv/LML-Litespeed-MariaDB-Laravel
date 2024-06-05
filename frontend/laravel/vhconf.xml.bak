@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<virtualHostConfig>
+  <docRoot>$VH_ROOT/public/</docRoot>
+  <index>
+    <useServer>0</useServer>
+    <indexFiles>index.php</indexFiles>
+    <autoIndex>0</autoIndex>
+  </index>
+  <scriptHandlerList>
+    <scriptHandler>
+      <suffix>php</suffix>
+      <type>lsapi</type>
+      <handler>Laravel</handler>
+    </scriptHandler>
+  </scriptHandlerList>
+  <extProcessorList>
+    <extProcessor>
+      <type>lsapi</type>
+      <name>Laravel</name>
+      <address>uds://tmp/lshttpd/lsphp-example.sock</address>
+      <maxConns>35</maxConns>
+      <env>PHP_LSAPI_MAX_REQUESTS=5000</env>
+      <env>PHP_LSAPI_CHILDREN=35</env>
+      <initTimeout>60</initTimeout>
+      <retryTimeout>0</retryTimeout>
+      <respBuffer>0</respBuffer>
+      <autoStart>1</autoStart>
+      <path>/usr/local/lsws/lsphp81/bin/lsphp</path>
+      <backlog>100</backlog>
+      <instances>1</instances>
+      <priority>0</priority>
+      <memSoftLimit>2047M</memSoftLimit>
+      <memHardLimit>2047M</memHardLimit>
+      <procSoftLimit>400</procSoftLimit>
+      <procHardLimit>500</procHardLimit>
+    </extProcessor>
+  </extProcessorList>
+</virtualHostConfig>

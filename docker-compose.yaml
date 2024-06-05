@@ -1,0 +1,80 @@
+version: '3'
+
+#networks:
+#  proyecto-lml:
+#    driver: bridge
+
+services:
+
+  frontend:
+
+    container_name: frontend-ubuntu
+
+    image: ubuntu:22.04
+
+    command: >
+      /bin/bash -c "mkdir -p /home/ubuntu/frontend/laravel /home/ubuntu/frontend/basedatos-inicio && tail -f /dev/null"
+
+    restart: always
+
+    volumes:
+        - ./frontend/laravel:/home/ubuntu/frontend/laravel
+        - ./frontend/basedatos-inicio:/home/ubuntu/frontend/basedatos-inicio
+
+    links:
+        - litespeed:litespeed
+
+  litespeed:
+
+#    networks:
+#      - proyecto-lml
+
+    container_name: litespeed-6.0.12-lsphp81
+
+    build: ./docker-customs/lsws/template
+    #env_file:
+    #  - .env
+    volumes:
+        - ./frontend/laravel:/var/www/vhosts/laravel
+        - ./lsws/conf:/usr/local/lsws/conf
+        - ./lsws/admin/conf:/usr/local/lsws/admin/conf
+        - ./bin/container:/usr/local/bin
+        - ./sites:/var/www/vhosts/
+        - ./acme:/root/.acme.sh/
+        - ./logs:/usr/local/lsws/logs/
+    ports:
+      - 80:80
+      - 443:443
+      - 7080:7080
+    restart: always
+    links:
+      - mysql:mysql
+
+    #environment:
+    #  TZ: ${TimeZone}
+
+  mysql:
+
+    #networks:
+    #  - proyecto-lml
+
+    container_name: mysql
+
+    image: mariadb:latest
+
+    # command: --initdb
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+
+    ports:
+      - 3306:3306
+
+    volumes:
+      - ./mariadb:/var/lib/mysql
+      - ./frontend/basedatos-inicio/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    restart: always
